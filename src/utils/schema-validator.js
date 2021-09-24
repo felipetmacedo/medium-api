@@ -5,12 +5,10 @@ import ErrorMessages from '../constants/error.messages';
 
 export default class SchemaValidator {
 	static getMessage(error) {
-		const field = error.path;
-		const errorType = error.type;
-		const fieldName = field;
+		const field = error.params.label || error.params.path;
 
-		return ErrorMessages[errorType]
-			? ErrorMessages[errorType](fieldName, error.params.originalValue, error.params.type)
+		return ErrorMessages[error.type]
+			? ErrorMessages[error.type](field, error.params.originalValue, error.params.type)
 			: 'Houve um erro, tente novamente em breve.';
 	}
 
@@ -21,6 +19,7 @@ export default class SchemaValidator {
 			if (error) {
 				return res.status(400).json({
 					status: 'error',
+					type_error: 'VALIDATION_ERROR',
 					message: SchemaValidator.getMessage(error)
 				});
 			}
@@ -56,7 +55,7 @@ export default class SchemaValidator {
 
 			return { results };
 		} catch (error) {
-			if (process.env.DEBUG) {
+			if (process.env.NODE_ENV !== 'production') {
 				Logger.error('---- VALIDATION ERROR ----');
 				Logger.error(error.stack);
 				Logger.error('---- VALIDATION ERROR ----');

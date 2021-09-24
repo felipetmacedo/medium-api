@@ -1,6 +1,6 @@
 {
   "name": "boilerplate-api",
-  "version": "v1.0.0",
+  "version": "v1.0.1",
   "main": "index.js",
   "repository": "git@github.com:amigoapp/boilerplate-api.git",
   "author": "Augusto Ferreira <augusto.ferreira@amigoapp.com.br>",
@@ -43,6 +43,7 @@
     "pg": "8.4.0",
     "pg-hstore": "2.3.3",
     "puppeteer": "10.0.0",
+    "sanitize-html": "^2.5.1",
     "sequelize": "6.3.5",
     "yup": "0.32.9"
   },

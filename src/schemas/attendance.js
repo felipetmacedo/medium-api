@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import moment from 'moment';
+import { sanitizeValue } from './utils';
 
 const schema = {
 	create: {
@@ -17,7 +18,7 @@ const schema = {
 export default {
 	list: {
 		query: yup.object({
-			start_date: yup.string().test('invalidFormat', null, value => !value || moment(value, 'YYYY-MM-DD').isValid()),
+			start_date: yup.string().transform(sanitizeValue).test('invalidFormat', null, value => !value || moment(value, 'YYYY-MM-DD').isValid()),
 			end_date: yup.string().test('invalidFormat', null, value => !value || moment(value, 'YYYY-MM-DD').isValid()),
 			page: yup.number().required(),
 			per_page: yup.number().required()
