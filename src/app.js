@@ -35,6 +35,17 @@ class App {
 		this.app.use(helmet());
 
 		this.app.use(routes.setup());
+		this.app.use((error, req, res, next) => {
+			if (error) {
+				res.status(500).json({
+					status: 'error',
+					message: 'Algo de errado aconteceu'
+				});
+				return;
+			}
+
+			next();
+		});
 	}
 
 	gracefulStop() {
@@ -48,7 +59,10 @@ class App {
 	}
 
 	start() {
-		this.httpServer.listen(this.port, () => this.setup());
+		this.httpServer.listen(this.port, () => {
+			Logger.success(`Server running port ${this.port}`);
+			this.setup();
+		});
 
 		process.on('SIGINT', this.gracefulStop());
 	}
