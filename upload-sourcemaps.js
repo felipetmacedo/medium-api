@@ -1,13 +1,10 @@
 const fs = require('fs');
-const dotenv = require('dotenv');
 const { node } = require('@bugsnag/source-maps');
 
 const uploadSourceMaps = () => {
 	return new Promise(resolve => {
-		const env = dotenv.config();
-
 		node.uploadMultiple({
-			apiKey: env.parsed.BUGSNAG_KEY,
+			apiKey: process.env.BUGSNAG_KEY,
 			directory: './build',
 			overwrite: true,
 			detectAppVersion: true
@@ -39,6 +36,10 @@ const removeSourceMapsPromise = () => {
 	});
 };
 
-return uploadSourceMaps()
+if (process.env.NODE_ENV !== 'production') {
+	process.exit(0);
+}
+
+uploadSourceMaps()
 	.then(removeSourceMapsPromise)
 	.then(() => process.exit(0));

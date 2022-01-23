@@ -12,8 +12,8 @@ class Database {
 			logging: false,
 			minifyAliases: true,
 			pool: {
-				max: 20,
-				min: 5
+				max: process.env.DB_CONNECTION ? ~~process.env.DB_CONNECTION : 10,
+				min: process.env.DB_CONNECTION_MIN ? ~~process.env.DB_CONNECTION_MIN : 5
 			},
 			query: {
 				raw: true
