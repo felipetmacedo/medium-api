@@ -12,7 +12,9 @@ import HandlebarsHelpers from './utils/handlebars';
 
 class App {
 	constructor() {
-		dotenv.config({ path: `${__dirname}/../.env` });
+		if (process.env.NODE_ENV !== 'production') {
+			dotenv.config({ path: `${__dirname}/../.env` });
+		}
 
 		this.app = express();
 		this.port = process.env.PORT || '3000';
@@ -29,8 +31,8 @@ class App {
 
 		HandlebarsHelpers.registerHelpers();
 
-		this.app.use(express.json({ limit: '100000kb' }));
-		this.app.use(express.urlencoded({ extended: false, limit: '100000kb' }));
+		this.app.use(express.json({ limit: '100mb' }));
+		this.app.use(express.urlencoded({ extended: false, limit: '100mb' }));
 		this.app.use(cors());
 		this.app.use(helmet());
 
@@ -39,6 +41,7 @@ class App {
 			if (error) {
 				res.status(500).json({
 					status: 'error',
+					code: 500,
 					message: 'Algo de errado aconteceu'
 				});
 				return;

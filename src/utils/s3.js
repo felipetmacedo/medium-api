@@ -29,6 +29,8 @@ export default class S3Utils {
 			multipartUploadSize: 15728640,
 			s3Options: {
 				region: 'us-west-2',
+				useAccelerateEndpoint: true,
+				endpoint: 's3-accelerate.amazonaws.com',
 				accessKeyId: awsConfig.accessKeyId,
 				secretAccessKey: awsConfig.secretAccessKey
 			}
