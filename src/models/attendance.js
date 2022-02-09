@@ -28,7 +28,7 @@ export default class Attendance extends BaseModel {
 	}
 
 	static associate(models) {
-		this.belongsTo(models.user, { foreignKey: 'user_id', as: 'doctor' });
-		this.belongsTo(models.company, { foreignKey: 'company_id', as: 'company' });
+		this.belongsTo(models.User, { foreignKey: 'user_id', as: 'doctor' });
+		this.belongsTo(models.Company, { foreignKey: 'company_id', as: 'company' });
 	}
 }
