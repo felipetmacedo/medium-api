@@ -1,5 +1,5 @@
 import BaseController from './base';
-import AttendanceService from '../services/attendance';
+import { AttendanceService } from '@services';
 import { pick } from 'lodash';
 
 class AttendanceController extends BaseController {
