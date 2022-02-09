@@ -1,13 +1,16 @@
-import ExceptionUtils from '../utils/exception';
-import Logger from '../utils/logger';
+import { ExceptionUtils, LoggerUtils } from '@utils';
 
 class BaseController {
+	bindActions(actions) {
+		actions.forEach(action => this[action] = this[action].bind(this));
+	}
+
 	errorHandler(error, req, res) {
 		if (process.env.NODE_ENV === 'production') {
-			Logger.log(req, error);
+			LoggerUtils.log(req, error);
 		} else if (process.env.DEBUG) {
-			Logger.error('--- ERROR ---');
-			Logger.error(error.stack);
+			LoggerUtils.error('--- ERROR ---');
+			LoggerUtils.error(error.stack);
 		}
 
 		if (error instanceof ExceptionUtils) {
