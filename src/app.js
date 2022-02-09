@@ -4,9 +4,8 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import express from 'express';
 
-import Database from './databases';
 import Cache from './modules/cache';
-
+import Database from './config/databases';
 import Routes from './config/routes.js';
 import { LoggerUtils, HandlebarsHelpersUtils } from '@utils';
 

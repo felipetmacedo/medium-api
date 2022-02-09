@@ -1,8 +1,8 @@
 import fs from 'fs';
 import Sequelize from 'sequelize';
-import { config } from './config/config';
+import { config } from './config';
 
-import Logger from './utils/logger';
+import Logger from '../utils/logger';
 
 class Database {
 	constructor() {
@@ -25,9 +25,9 @@ class Database {
 	}
 
 	_loadModels() {
-		fs.readdirSync(`${__dirname}/models`, { withFileTypes: true })
-			.filter(entry => fs.statSync(`${__dirname}/models/${entry.name}`).isFile())
-			.map(entry => `${__dirname}/models/${entry.name}`)
+		fs.readdirSync(`${__dirname}/../models`, { withFileTypes: true })
+			.filter(entry => fs.statSync(`${__dirname}/../models/${entry.name}`).isFile())
+			.map(entry => `${__dirname}/../models/${entry.name}`)
 			.forEach(filePath => {
 				const Model = require(filePath).default;
 
