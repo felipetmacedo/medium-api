@@ -1,2 +1,2 @@
-# Boilerplate-api v1.0.0
-NodeJS >=12.18.3 &lt;= 14
+# Boilerplate-api v1.0.2
+NodeJS >=16 &lt;= 16.14.0
