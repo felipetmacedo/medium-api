@@ -5,10 +5,10 @@ import dotenv from 'dotenv';
 import express from 'express';
 
 import Database from './databases';
+import Cache from './modules/cache';
 
-import Routes from './routes.js';
-import Logger from './utils/logger';
-import HandlebarsHelpers from './utils/handlebars';
+import Routes from './config/routes.js';
+import { LoggerUtils, HandlebarsHelpersUtils } from '@utils';
 
 class App {
 	constructor() {
@@ -20,19 +20,26 @@ class App {
 		this.port = process.env.PORT || '3000';
 		this.httpServer = http.createServer(this.app);
 
-		this.logger = new Logger();
-		this.database = new Database();
+		new LoggerUtils();
+
+		this.cacheModule = new Cache();
+		this.databaseModule = new Database();
+	}
+
+	async initializeModules() {
+		return Promise.all([
+			this.cacheModule.connect(),
+			this.databaseModule.connect()
+		]);
 	}
 
 	async setup() {
-		await this.database.connect();
-
 		const routes = new Routes();
 
-		HandlebarsHelpers.registerHelpers();
+		HandlebarsHelpersUtils.registerHelpers();
 
-		this.app.use(express.json({ limit: '100mb' }));
-		this.app.use(express.urlencoded({ extended: false, limit: '100mb' }));
+		this.app.use(express.json());
+		this.app.use(express.urlencoded({ extended: false }));
 		this.app.use(cors());
 		this.app.use(helmet());
 
@@ -54,16 +61,21 @@ class App {
 	gracefulStop() {
 		return () => {
 			this.httpServer.close(async error => {
-				await this.database.disconnect();
+				await Promise.all([
+					this.cacheModule.disconnect(),
+					this.databaseModule.disconnect()
+				]);
 
 				return error ? process.exit(1) : process.exit(0);
 			});
 		};
 	}
 
-	start() {
+	async start() {
+		await this.initializeModules();
+
 		this.httpServer.listen(this.port, () => {
-			Logger.success(`Server running port ${this.port}`);
+			LoggerUtils.success(`Server running port ${this.port}`);
 			this.setup();
 		});
 

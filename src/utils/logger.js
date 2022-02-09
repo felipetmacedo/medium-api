@@ -4,7 +4,7 @@ import BugsnagPluginExpress from '@bugsnag/plugin-express';
 
 import ExceptionUtils from './exception';
 
-class Logger {
+export default class LoggerUtils {
 	constructor() {
 		try {
 			if (process.env.NODE_ENV === 'production') {
@@ -17,7 +17,7 @@ class Logger {
 				});
 			}
 		} catch (error) {
-			Logger.error('Bugsnag not loaded!');
+			LoggerUtils.error('Bugsnag not loaded!');
 		}
 	}
 
@@ -71,5 +71,3 @@ class Logger {
 		console.info(chalk.green(...arguments));
 	}
 }
-
-export default Logger;

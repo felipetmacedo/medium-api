@@ -1,10 +1,10 @@
 import { Router } from 'express';
 
 import SchemaValidator from '../utils/schema-validator';
-import AttendanceSchema from '../schemas/attendance';
-import AttendanceController from '../controllers/attendance';
+import { AttendanceSchema } from '@schemas';
+import { AttendanceController } from '@controllers';
 
-class AttendanceRoutes {
+export default class AttendanceRoutes {
 	constructor() {
 		this.router = new Router();
 
@@ -21,5 +21,3 @@ class AttendanceRoutes {
 		return this.router;
 	}
 }
-
-export default AttendanceRoutes;

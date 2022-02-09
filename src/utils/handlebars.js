@@ -2,7 +2,7 @@ import moment from 'moment';
 import Handlebars from 'handlebars';
 import { isEmpty, isEqual, includes } from 'lodash';
 
-export default class HandlebarsHelpers {
+export default class HandlebarsHelpersUtils {
 	static registerHelpers() {
 		Handlebars.registerHelper('isEmpty', isEmpty);
 		Handlebars.registerHelper('isEqual', isEqual);

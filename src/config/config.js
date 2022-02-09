@@ -22,6 +22,15 @@ export const config = {
 			}
 		}]
 	},
+	redis: {
+		host: process.env.REDIS_HOST,
+		timeout: {
+			five_minutes: 300,
+			one_day: 86400,
+			six_hours: 21600,
+			monthly: (60 * 60 * 24 * 30)
+		}
+	},
 	aws: {
 		bucket: process.env.AWS_S3_BUCKET,
 		prefix: process.env.AWS_S3_PREFIX,
