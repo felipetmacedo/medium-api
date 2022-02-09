@@ -3,10 +3,6 @@ import Attendance from '../models/attendance';
 import ExceptionUtils from '../utils/exception';
 
 class AttendanceService {
-	constructor() {
-		this.attendanceModel = Attendance.getInstance();
-		this.attendanceReadModel = Attendance.getInstance('replica');
-	}
 
 	async list({ meta, filter }) {
 		const itensPerPage = (meta.per_page && meta.per_page < 50) ? meta.per_page : 20;
@@ -17,7 +13,7 @@ class AttendanceService {
 			method: ['defaultWhere', filter.company_id]
 		}];
 
-		promises.push(this.attendanceReadModel.scope(...scopes).findAll({
+		promises.push(Attendance.scope(...scopes).findAll({
 			attributes: ['id', 'type'],
 			order: [['id', 'DESC']],
 			limit: itensPerPage,
@@ -27,7 +23,7 @@ class AttendanceService {
 		}));
 
 		if (page === 1) {
-			promises.push(this.attendanceReadModel.scope(...scopes).count({
+			promises.push(Attendance.scope(...scopes).count({
 				where: filter
 			}));
 		}
@@ -46,7 +42,7 @@ class AttendanceService {
 	}
 
 	async find({ filter }) {
-		const attendance = await this.attendanceReadModel.scope({
+		const attendance = await Attendance.scope({
 			method: ['defaultWhere', filter.company_id]
 		}).findOne({
 			where: filter,
@@ -61,10 +57,10 @@ class AttendanceService {
 	}
 
 	async create(attendance) {
-		const transaction = await this.attendanceModel.sequelize.transaction();
+		const transaction = await Attendance.sequelize.transaction();
 
 		try {
-			const attendanceCreated = await this.attendanceModel.create(attendance, { transaction });
+			const attendanceCreated = await Attendance.create(attendance, { transaction });
 
 			await transaction.commit();
 
@@ -76,10 +72,10 @@ class AttendanceService {
 	}
 
 	async update({ changes, filter }) {
-		const transaction = await this.attendanceModel.sequelize.transaction();
+		const transaction = await Attendance.sequelize.transaction();
 
 		try {
-			const attendanceUpdated = await this.attendanceModel.update(changes, {
+			const attendanceUpdated = await Attendance.update(changes, {
 				where: filter,
 				transaction,
 				returning: true
