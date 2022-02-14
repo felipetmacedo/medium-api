@@ -8,11 +8,7 @@ class AttendanceController extends BaseController {
 
 		this.attendanceService = new AttendanceService();
 
-		this.list = this.list.bind(this);
-		this.find = this.find.bind(this);
-		this.create = this.create.bind(this);
-		this.update = this.update.bind(this);
-		this.remove = this.remove.bind(this);
+		this.bindActions(['list', 'find', 'create', 'update', 'remove']);
 	}
 
 	async list(req, res) {

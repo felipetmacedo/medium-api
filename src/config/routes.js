@@ -5,15 +5,15 @@ import { AttendanceRoutes } from '@routes';
 
 export default class Routes {
 	constructor() {
-		this.routess = new Router();
+		this.routes = new Router();
 
 		this.attendanceRoutes = new AttendanceRoutes();
 	}
 
 	setup() {
-		this.routess.use('/attendance', AuthMiddleware.isAuthorized, this.attendanceRoutes.setup());
-		this.routess.get('/health', (req, res) => res.status(200).send('OK'));
+		this.routes.use('/attendance', AuthMiddleware.isAuthorized, this.attendanceRoutes.setup());
+		this.routes.get('/health', (req, res) => res.status(200).send('OK'));
 
-		return this.routess;
+		return this.routes;
 	}
 }
