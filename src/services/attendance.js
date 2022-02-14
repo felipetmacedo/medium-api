@@ -1,6 +1,6 @@
 
-import Attendance from '../models/attendance';
-import ExceptionUtils from '../utils/exception';
+import { Attendance } from '@models';
+import { ExceptionUtils } from '@utils';
 
 class AttendanceService {
 

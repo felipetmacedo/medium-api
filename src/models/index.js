@@ -1,5 +1,7 @@
 import User from './user';
+import Attendance from './attendance';
 
 export {
-	User
+	User,
+	Attendance
 };
