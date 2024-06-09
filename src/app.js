@@ -1,35 +1,30 @@
-import cors from 'cors';
-import http from 'http';
-import helmet from 'helmet';
-import dotenv from 'dotenv';
-import express from 'express';
+import cors from "cors";
+import http from "http";
+import helmet from "helmet";
+import dotenv from "dotenv";
+import express from "express";
 
-import Cache from './modules/cache';
-import Database from './config/databases';
-import Routes from './config/routes.js';
-import { LoggerUtils, HandlebarsHelpersUtils } from '@utils';
+import Database from "./config/databases";
+import Routes from "./config/routes.js";
+import { LoggerUtils, HandlebarsHelpersUtils } from "@utils";
 
 class App {
 	constructor() {
-		if (process.env.NODE_ENV !== 'production') {
+		if (process.env.NODE_ENV !== "production") {
 			dotenv.config({ path: `${__dirname}/../.env` });
 		}
 
 		this.app = express();
-		this.port = process.env.PORT || '3000';
+		this.port = process.env.PORT || "3000";
 		this.httpServer = http.createServer(this.app);
 
 		new LoggerUtils();
 
-		this.cacheModule = new Cache();
 		this.databaseModule = new Database();
 	}
 
 	async initializeModules() {
-		return Promise.all([
-			this.cacheModule.connect(),
-			this.databaseModule.connect()
-		]);
+		return Promise.all([this.databaseModule.connect()]);
 	}
 
 	async setup() {
@@ -46,9 +41,9 @@ class App {
 		this.app.use((error, req, res, next) => {
 			if (error) {
 				res.status(500).json({
-					status: 'error',
+					status: "error",
 					code: 500,
-					message: 'Algo de errado aconteceu'
+					message: "Algo de errado aconteceu",
 				});
 				return;
 			}
@@ -59,11 +54,8 @@ class App {
 
 	gracefulStop() {
 		return () => {
-			this.httpServer.close(async error => {
-				await Promise.all([
-					this.cacheModule.disconnect(),
-					this.databaseModule.disconnect()
-				]);
+			this.httpServer.close(async (error) => {
+				await Promise.all([this.databaseModule.disconnect()]);
 
 				return error ? process.exit(1) : process.exit(0);
 			});
@@ -78,7 +70,7 @@ class App {
 			this.setup();
 		});
 
-		process.on('SIGINT', this.gracefulStop());
+		process.on("SIGINT", this.gracefulStop());
 	}
 }
 

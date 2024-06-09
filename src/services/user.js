@@ -1,37 +1,42 @@
-
-import { Attendance } from '@models';
-import { ExceptionUtils } from '@utils';
+import { Attendance } from "@models";
+import { ExceptionUtils } from "@utils";
 
 class AttendanceService {
-
 	async list({ meta, filter }) {
-		const itensPerPage = (meta.per_page && meta.per_page < 50) ? meta.per_page : 20;
+		const itensPerPage =
+			meta.per_page && meta.per_page < 50 ? meta.per_page : 20;
 		const page = ~~meta.page || 1;
-		const offset = ((page - 1) * itensPerPage);
+		const offset = (page - 1) * itensPerPage;
 		const promises = [];
-		const scopes = [{
-			method: ['defaultWhere', filter.company_id]
-		}];
+		const scopes = [
+			{
+				method: ["defaultWhere", filter.company_id],
+			},
+		];
 
-		promises.push(Attendance.scope(...scopes).findAll({
-			attributes: ['id', 'type'],
-			order: [['id', 'DESC']],
-			limit: itensPerPage,
-			offset,
-			raw: false,
-			where: filter
-		}));
+		promises.push(
+			Attendance.scope(...scopes).findAll({
+				attributes: ["id", "type"],
+				order: [["id", "DESC"]],
+				limit: itensPerPage,
+				offset,
+				raw: false,
+				where: filter,
+			})
+		);
 
 		if (page === 1) {
-			promises.push(Attendance.scope(...scopes).count({
-				where: filter
-			}));
+			promises.push(
+				Attendance.scope(...scopes).count({
+					where: filter,
+				})
+			);
 		}
 
 		const [attendances, totalItems] = await Promise.all(promises);
 
 		const resp = {
-			items: attendances
+			items: attendances,
 		};
 
 		if (page === 1) {
@@ -43,14 +48,14 @@ class AttendanceService {
 
 	async find({ filter }) {
 		const attendance = await Attendance.scope({
-			method: ['defaultWhere', filter.company_id]
+			method: ["defaultWhere", filter.company_id],
 		}).findOne({
 			where: filter,
-			attributes: ['id', 'type']
+			attributes: ["id", "type"],
 		});
 
 		if (!attendance) {
-			throw new ExceptionUtils('NOT_FOUND');
+			throw new ExceptionUtils("NOT_FOUND");
 		}
 
 		return attendance;
@@ -60,7 +65,9 @@ class AttendanceService {
 		const transaction = await Attendance.sequelize.transaction();
 
 		try {
-			const attendanceCreated = await Attendance.create(attendance, { transaction });
+			const attendanceCreated = await Attendance.create(attendance, {
+				transaction,
+			});
 
 			await transaction.commit();
 
@@ -78,7 +85,7 @@ class AttendanceService {
 			const attendanceUpdated = await Attendance.update(changes, {
 				where: filter,
 				transaction,
-				returning: true
+				returning: true,
 			});
 
 			await transaction.commit();
