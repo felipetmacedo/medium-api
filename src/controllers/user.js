@@ -25,7 +25,11 @@ class UserController extends BaseController {
 
 	async create(req, res) {
 		try {
-			const user = await this.userService.create(req.data);
+			const user = await this.userService.create({
+				name: req.data.name,
+				email: req.data.email,
+				password: req.data.password,
+			});
 			this.successHandler(user, res);
 		} catch (error) {
 			this.errorHandler(error, req, res);

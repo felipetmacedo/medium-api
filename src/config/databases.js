@@ -1,6 +1,6 @@
 import fs from "fs";
 import Sequelize from "sequelize";
-import { config } from "./config";
+import config from "./config"; // Changed import to correctly reference the config file
 
 import Logger from "../utils/logger";
 
@@ -8,23 +8,26 @@ class Database {
 	constructor() {
 		this.models = {};
 		this.databaseOptions = {
-			dialect: "postgres",
-			port: process.env.DB_PORT || 5434,
+			dialect: config.dialect,
+			host: config.host,
+			port: config.port,
+			username: config.username,
+			password: config.password,
+			database: config.database,
+			define: config.define,
+			dialectOptions: config.dialectOptions,
+			timezone: config.timezone,
 			logging: false,
 			minifyAliases: true,
 			query: {
 				raw: true,
 			},
-			replication: {
-				read: config.database.read,
-				write: config.database.master,
-			},
 		};
 
 		this._instance = new Sequelize(
-			config.database.dbname,
-			null,
-			null,
+			this.databaseOptions.database,
+			this.databaseOptions.username,
+			this.databaseOptions.password,
 			this.databaseOptions
 		);
 	}

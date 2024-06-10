@@ -1,4 +1,4 @@
-import { User } from "@models";
+import { User } from "../models/index";
 import { AuthUtils } from "@utils";
 
 class UserService {
@@ -15,16 +15,15 @@ class UserService {
 	}
 
 	async create(user) {
+		console.log(User);
 		const transaction = await User.sequelize.transaction();
 
 		try {
-			const userCreated = await User.create(user, {
-				transaction,
-			});
+			const userCreated = await User.create(user, { transaction });
 
 			await transaction.commit();
 
-			userCreated;
+			return userCreated;
 		} catch (error) {
 			await transaction.rollback();
 			throw error;
