@@ -23,7 +23,6 @@ export default class AuthMiddleware {
 
 		req.auth = {
 			user_id: decodedToken.user.id,
-			company_id: decodedToken.user.log_in,
 		};
 
 		next();

@@ -1,4 +1,5 @@
 import BaseModel from "./base";
+import bcrypt from "bcrypt";
 
 export default class User extends BaseModel {
 	static load(sequelize, DataTypes) {
@@ -27,5 +28,9 @@ export default class User extends BaseModel {
 				updatedAt: "updated_at",
 			}
 		);
+	}
+
+	async verifyPassword(password) {
+		return bcrypt.compare(password, this.password);
 	}
 }

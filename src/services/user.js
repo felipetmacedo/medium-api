@@ -1,77 +1,30 @@
-import { Attendance } from "@models";
-import { ExceptionUtils } from "@utils";
+import { User } from "@models";
+import { AuthUtils } from "@utils";
 
-class AttendanceService {
-	async list({ meta, filter }) {
-		const itensPerPage =
-			meta.per_page && meta.per_page < 50 ? meta.per_page : 20;
-		const page = ~~meta.page || 1;
-		const offset = (page - 1) * itensPerPage;
-		const promises = [];
-		const scopes = [
-			{
-				method: ["defaultWhere", filter.company_id],
-			},
-		];
+class UserService {
+	async login(credentials) {
+		const { email, password } = credentials;
+		const user = await User.findOne({ where: { email } });
 
-		promises.push(
-			Attendance.scope(...scopes).findAll({
-				attributes: ["id", "type"],
-				order: [["id", "DESC"]],
-				limit: itensPerPage,
-				offset,
-				raw: false,
-				where: filter,
-			})
-		);
-
-		if (page === 1) {
-			promises.push(
-				Attendance.scope(...scopes).count({
-					where: filter,
-				})
-			);
+		if (!user || !user.verifyPassword(password)) {
+			throw new Error("Invalid email or password");
 		}
 
-		const [attendances, totalItems] = await Promise.all(promises);
-
-		const resp = {
-			items: attendances,
-		};
-
-		if (page === 1) {
-			resp.total_items = totalItems;
-		}
-
-		return resp;
+		const token = AuthUtils.generateToken({ userId: user.id });
+		return { user, token };
 	}
 
-	async find({ filter }) {
-		const attendance = await Attendance.scope({
-			method: ["defaultWhere", filter.company_id],
-		}).findOne({
-			where: filter,
-			attributes: ["id", "type"],
-		});
-
-		if (!attendance) {
-			throw new ExceptionUtils("NOT_FOUND");
-		}
-
-		return attendance;
-	}
-
-	async create(attendance) {
-		const transaction = await Attendance.sequelize.transaction();
+	async create(user) {
+		const transaction = await User.sequelize.transaction();
 
 		try {
-			const attendanceCreated = await Attendance.create(attendance, {
+			const userCreated = await User.create(user, {
 				transaction,
 			});
 
 			await transaction.commit();
 
-			attendanceCreated;
+			userCreated;
 		} catch (error) {
 			await transaction.rollback();
 			throw error;
@@ -79,10 +32,10 @@ class AttendanceService {
 	}
 
 	async update({ changes, filter }) {
-		const transaction = await Attendance.sequelize.transaction();
+		const transaction = await User.sequelize.transaction();
 
 		try {
-			const attendanceUpdated = await Attendance.update(changes, {
+			const userUpdated = await User.update(changes, {
 				where: filter,
 				transaction,
 				returning: true,
@@ -90,7 +43,7 @@ class AttendanceService {
 
 			await transaction.commit();
 
-			return attendanceUpdated[1][0];
+			return userUpdated[1][0];
 		} catch (error) {
 			await transaction.rollback();
 			throw error;
@@ -98,4 +51,4 @@ class AttendanceService {
 	}
 }
 
-export default AttendanceService;
+export default UserService;
