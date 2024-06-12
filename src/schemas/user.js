@@ -15,23 +15,18 @@ const schema = {
 			id: yup.number().required(),
 		}),
 	},
+	login: {
+		body: yup
+			.object({
+				email: yup.string().email().required(),
+				password: yup.string().required(),
+			})
+			.noUnknown(),
+	},
 };
 
 export default {
-	login(req, res, next) {
-		const { email, password } = req.body;
-
-		if (!email || !password) {
-			return res
-				.status(400)
-				.json({ message: "Email and password are required" });
-		}
-
-		return next();
-	},
-	logout(next) {
-		return next();
-	},
+	login: schema.login,
 	remove: schema.find,
 	create: schema.create,
 	update: {

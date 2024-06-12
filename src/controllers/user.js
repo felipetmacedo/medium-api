@@ -12,12 +12,11 @@ class UserController extends BaseController {
 
 	async login(req, res) {
 		try {
-			const { email, password } = req.data;
-			const { user, token } = await this.userService.login({
-				email,
-				password,
+			const response = await this.userService.login({
+				email: req.data.email,
+				password: req.data.password,
 			});
-			this.successHandler({ user, token }, res);
+			this.successHandler(response, res);
 		} catch (error) {
 			this.errorHandler(error, req, res);
 		}
@@ -25,12 +24,12 @@ class UserController extends BaseController {
 
 	async create(req, res) {
 		try {
-			const user = await this.userService.create({
+			const response = await this.userService.create({
 				name: req.data.name,
 				email: req.data.email,
 				password: req.data.password,
 			});
-			this.successHandler(user, res);
+			this.successHandler(response, res);
 		} catch (error) {
 			this.errorHandler(error, req, res);
 		}
@@ -50,13 +49,8 @@ class UserController extends BaseController {
 
 	async remove(req, res) {
 		try {
-			await this.userService.update({
-				changes: {
-					is_deleted: true,
-					destroyer_id: req.filter.logged_user_id,
-				},
-				filter: req.filter,
-			});
+			await this.userService.delete(req.filter);
+
 			this.successHandler(true, res);
 		} catch (error) {
 			this.errorHandler(error, req, res);

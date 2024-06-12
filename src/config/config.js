@@ -6,11 +6,12 @@ module.exports = {
 	username: process.env.DATABASE_USERNAME,
 	password: process.env.DATABASE_PASSWORD,
 	database: process.env.DATABASE_NAME,
-	port: process.env.DATABASE_PORT || 5434,
+	secretKey: process.env.SECRET_KEY,
+	port: process.env.DATABASE_PORT || 5432,
 	define: {
 		timestamps: true,
 		underscored: true,
-		underscoredAll: true, // Fixed typo from 'unrderscoredAll'
+		underscoredAll: true,
 		createdAt: "created_at",
 		updatedAt: "updated_at",
 	},
