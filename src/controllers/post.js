@@ -25,6 +25,7 @@ class PostController extends BaseController {
 
 	async list(req, res) {
 		try {
+			console.log(req.auth, "req.auth");
 			const response = await this.postService.list({
 				meta: {
 					page: req.filter.page,

@@ -12,19 +12,16 @@ export default class PostRoutes extends BaseRoutes {
 	setup() {
 		this.router.post(
 			"/",
-			AuthMiddleware.isAuthorized,
 			this.SchemaValidator.validate(PostSchema.create),
 			this.postController.create
 		);
 		this.router.put(
 			"/:id",
-			AuthMiddleware.isAuthorized,
 			this.SchemaValidator.validate(PostSchema.update),
 			this.postController.update
 		);
 		this.router.delete(
 			"/:id",
-			AuthMiddleware.isAuthorized,
 			this.SchemaValidator.validate(PostSchema.remove),
 			this.postController.remove
 		);

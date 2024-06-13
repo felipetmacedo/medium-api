@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 class UserService {
 	async login(credentials) {
 		const { email, password } = credentials;
+
 		const user = await User.findOne({
 			where: { email },
 			attributes: ["id", "email", "password"],
@@ -17,6 +18,7 @@ class UserService {
 		}
 
 		const token = AuthUtils.generateToken({ id: user.id });
+
 		return { user: pick(user, ["id", "email", "name"]), token };
 	}
 
