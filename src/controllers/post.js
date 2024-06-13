@@ -1,3 +1,4 @@
+import { filter } from "lodash";
 import BaseController from "./base";
 import { PostService } from "@services";
 
@@ -7,7 +8,14 @@ class PostController extends BaseController {
 
 		this.postService = new PostService();
 
-		this.bindActions(["create", "list", "update", "remove"]);
+		this.bindActions([
+			"create",
+			"list",
+			"update",
+			"remove",
+			"like",
+			"dislike",
+		]);
 	}
 
 	async create(req, res) {
@@ -25,7 +33,6 @@ class PostController extends BaseController {
 
 	async list(req, res) {
 		try {
-			console.log(req.auth, "req.auth");
 			const response = await this.postService.list({
 				meta: {
 					page: req.filter.page,
@@ -60,6 +67,36 @@ class PostController extends BaseController {
 			await this.postService.delete({
 				id: req.filter.id,
 				logged_user_id: req.auth.id,
+			});
+
+			this.successHandler(true, res);
+		} catch (error) {
+			this.errorHandler(error, req, res);
+		}
+	}
+
+	async like(req, res) {
+		try {
+			await this.postService.like({
+				filter: {
+					post_id: req.filter.id,
+					logged_user_id: req.auth.id,
+				},
+			});
+
+			this.successHandler(true, res);
+		} catch (error) {
+			this.errorHandler(error, req, res);
+		}
+	}
+
+	async dislike(req, res) {
+		try {
+			await this.postService.dislike({
+				filter: {
+					post_id: req.filter.id,
+					logged_user_id: req.auth.id,
+				},
 			});
 
 			this.successHandler(true, res);

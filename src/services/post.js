@@ -1,7 +1,5 @@
-import { log } from "handlebars";
 import { Post, PostLike } from "../models/index";
 import { PaginationUtils } from "../utils";
-import { filter } from "lodash";
 
 class PostService {
 	create(post) {
@@ -27,7 +25,6 @@ class PostService {
 	}
 
 	async list({ filter, meta }) {
-		console.log(filter, meta);
 		const promises = [];
 		const scopes = [];
 		const Pagination = PaginationUtils.config({
@@ -43,7 +40,6 @@ class PostService {
 
 		promises.push(
 			Post.scope(scopes).findAll({
-				logging: true,
 				...Pagination.getQueryParams(),
 				raw: false,
 				attributes: [
@@ -67,6 +63,106 @@ class PostService {
 			...Pagination.mount(totalItems),
 			posts,
 		};
+	}
+
+	async like({ filter }) {
+		const transaction = await Post.sequelize.transaction();
+		try {
+			const post = await Post.findOne({
+				where: {
+					id: filter.post_id,
+				},
+				transaction,
+			});
+
+			if (!post) {
+				throw new Error("Post not found");
+			}
+
+			const hasLike = await PostLike.findOne({
+				where: {
+					post_id: filter.post_id,
+					user_id: filter.logged_user_id,
+				},
+				transaction,
+			});
+
+			if (hasLike) {
+				throw new Error("Post already liked");
+			}
+
+			await PostLike.create(
+				{
+					post_id: filter.post_id,
+					user_id: filter.logged_user_id,
+				},
+				{ transaction }
+			);
+
+			await Post.increment("total_likes", {
+				where: {
+					id: filter.post_id,
+				},
+				by: 1,
+				transaction,
+			});
+
+			await transaction.commit();
+			return post;
+		} catch (error) {
+			await transaction.rollback();
+			throw error;
+		}
+	}
+
+	async dislike({ filter }) {
+		const transaction = await Post.sequelize.transaction();
+		try {
+			const post = await Post.findOne({
+				where: {
+					id: filter.post_id,
+				},
+				transaction,
+			});
+
+			if (!post) {
+				throw new Error("Post not found");
+			}
+
+			const hasLike = await PostLike.findOne({
+				where: {
+					post_id: filter.post_id,
+					user_id: filter.logged_user_id,
+				},
+				transaction,
+			});
+
+			if (!hasLike) {
+				throw new Error("Post not liked");
+			}
+
+			await PostLike.destroy({
+				where: {
+					post_id: filter.post_id,
+					user_id: filter.logged_user_id,
+				},
+				transaction,
+			});
+
+			await Post.decrement("total_likes", {
+				where: {
+					id: filter.post_id,
+				},
+				by: 1,
+				transaction,
+			});
+
+			await transaction.commit();
+			return post;
+		} catch (error) {
+			await transaction.rollback();
+			throw error;
+		}
 	}
 }
 

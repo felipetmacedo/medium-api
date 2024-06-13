@@ -9,7 +9,7 @@ export default class PostLike extends Model {
 					primaryKey: true,
 					autoIncrement: true,
 				},
-				userId: {
+				user_id: {
 					type: DataTypes.INTEGER,
 					allowNull: false,
 					references: {
@@ -17,7 +17,7 @@ export default class PostLike extends Model {
 						key: "id",
 					},
 				},
-				postId: {
+				post_id: {
 					type: DataTypes.INTEGER,
 					allowNull: false,
 					references: {

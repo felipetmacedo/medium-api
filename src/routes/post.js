@@ -1,6 +1,5 @@
 import { PostSchema } from "@schemas";
 import { PostController } from "@controllers";
-import { AuthMiddleware } from "@middlewares";
 import BaseRoutes from "./base";
 
 export default class PostRoutes extends BaseRoutes {
@@ -10,6 +9,11 @@ export default class PostRoutes extends BaseRoutes {
 	}
 
 	setup() {
+		this.router.get(
+			"/",
+			this.SchemaValidator.validate(PostSchema.list),
+			this.postController.list
+		);
 		this.router.post(
 			"/",
 			this.SchemaValidator.validate(PostSchema.create),
@@ -25,10 +29,15 @@ export default class PostRoutes extends BaseRoutes {
 			this.SchemaValidator.validate(PostSchema.remove),
 			this.postController.remove
 		);
-		this.router.get(
-			"/",
-			this.SchemaValidator.validate(PostSchema.list),
-			this.postController.list
+		this.router.post(
+			"/:id/like",
+			this.SchemaValidator.validate(PostSchema.like),
+			this.postController.like
+		);
+		this.router.post(
+			"/:id/dislike",
+			this.SchemaValidator.validate(PostSchema.dislike),
+			this.postController.dislike
 		);
 
 		return this.router;
