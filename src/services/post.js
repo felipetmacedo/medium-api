@@ -1,6 +1,7 @@
 import { log } from "handlebars";
 import { Post, PostLike } from "../models/index";
 import { PaginationUtils } from "../utils";
+import { filter } from "lodash";
 
 class PostService {
 	create(post) {
@@ -13,7 +14,6 @@ class PostService {
 				user_id: filter.logged_user_id,
 				id: filter.id,
 			},
-			logging: true,
 		});
 	}
 
@@ -26,39 +26,46 @@ class PostService {
 		});
 	}
 
-	async list({ meta }) {
+	async list({ filter, meta }) {
+		console.log(filter, meta);
+		const promises = [];
+		const scopes = [];
 		const Pagination = PaginationUtils.config({
 			page: meta.page,
 			items_per_page: 20,
 		});
-		const promises = [];
-
-		const whereCondition = {
-			deleted_at: null,
-		};
+		if (filter.logged_user_id) {
+			scopes.push({
+				name: "withUserLike",
+				options: filter.logged_user_id,
+			});
+		}
 
 		promises.push(
-			Post.findAll({
-				...Pagination.getQueryParams(),
+			Post.scope(scopes).findAll({
 				logging: true,
+				...Pagination.getQueryParams(),
 				raw: false,
-				where: whereCondition,
+				attributes: [
+					"id",
+					"user_id",
+					"title",
+					"content",
+					"total_likes",
+					"created_at",
+				],
 			})
 		);
 
 		if (Pagination.getPage() === 1) {
-			promises.push(
-				Post.count({
-					where: whereCondition,
-				})
-			);
+			promises.push(Post.count({}));
 		}
 
 		const [posts, totalItems] = await Promise.all(promises);
 
 		return {
 			...Pagination.mount(totalItems),
-			posts: posts.map((post) => post.get({ plain: true })),
+			posts,
 		};
 	}
 }

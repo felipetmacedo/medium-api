@@ -1,3 +1,4 @@
+import { replace } from "lodash";
 import BaseModel from "./base";
 
 export default class Post extends BaseModel {
@@ -32,6 +33,25 @@ export default class Post extends BaseModel {
 				createdAt: "created_at",
 				updatedAt: "updated_at",
 				deletedAt: "deleted_at",
+				scopes: {
+					withUserLike: (id) => ({
+						attributes: [
+							[
+								sequelize.literal(
+									`CASE WHEN (
+											SELECT 1
+											FROM post_likes
+											WHERE post_likes.post_id = post.id
+											AND post_likes.user_id = :user_id
+											AND post_likes.is_deleted is false
+										) is not null THEN true ELSE false END`
+								),
+								"is_liked",
+							],
+						],
+						replacements: { user_id: id },
+					}),
+				},
 			}
 		);
 	}

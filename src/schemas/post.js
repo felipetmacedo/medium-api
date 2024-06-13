@@ -17,9 +17,11 @@ const schema = {
 			.noUnknown(),
 	},
 	list: {
-		query: yup.object({
-			page: yup.number().default(1),
-		}),
+		query: yup
+			.object({
+				page: yup.number().default(1),
+			})
+			.noUnknown(),
 	},
 };
 
