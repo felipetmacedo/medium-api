@@ -1,30 +1,37 @@
-import AuthUtils from "@utils";
+import { AuthUtils } from "@utils";
 
 export default class AuthMiddleware {
 	static isAuthorized(req, res, next) {
-		const errorResponse = {
-			status: "error",
-			code: 403,
-			message:
-				"Sessão expirada. Logue novamente no sistema para obter acesso.",
-		};
+		try {
+			const errorResponse = {
+				status: "error",
+				code: 403,
+				message:
+					"Sessão expirada. Logue novamente no sistema para obter acesso.",
+			};
 
-		const token = AuthUtils.getBearerToken(req);
-		const decodedToken = AuthUtils.decodeData(
-			token,
-			process.env.APP_SECRET_KEY
-		);
+			const token = AuthUtils.getBearerToken(req);
+			const decodedToken = AuthUtils.decodeData(token);
 
-		if (!decodedToken || !decodedToken.user || !decodedToken.user.id) {
-			res.status(403).json(errorResponse);
+			if (!decodedToken || !decodedToken.id) {
+				res.status(403).json(errorResponse);
 
-			return;
+				return;
+			}
+
+			req.auth = {
+				id: decodedToken.id,
+			};
+
+			next();
+		} catch (error) {
+			console.error(error);
+			res.status(403).json({
+				status: "error",
+				code: 403,
+				message:
+					"Sessão expirada. Logue novamente no sistema para obter acesso.",
+			});
 		}
-
-		req.auth = {
-			user_id: decodedToken.user.id,
-		};
-
-		next();
 	}
 }

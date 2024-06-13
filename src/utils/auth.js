@@ -2,7 +2,7 @@ import { verify, sign } from "jsonwebtoken";
 import config from "../config/config";
 
 export default class AuthUtils {
-	static decodeData(token, key) {
+	static decodeData(token, key = config.secretKey) {
 		try {
 			return verify(token, key);
 		} catch (err) {

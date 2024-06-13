@@ -16,7 +16,7 @@ class UserService {
 			throw new ExceptionUtils("NOT_FOUND");
 		}
 
-		const token = AuthUtils.generateToken({ userId: user.id });
+		const token = AuthUtils.generateToken({ id: user.id });
 		return { user: pick(user, ["id", "email", "name"]), token };
 	}
 
