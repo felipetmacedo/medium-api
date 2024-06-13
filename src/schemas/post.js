@@ -16,10 +16,16 @@ const schema = {
 			})
 			.noUnknown(),
 	},
+	list: {
+		query: yup.object({
+			page: yup.number().default(1),
+		}),
+	},
 };
 
 export default {
 	find: schema.find,
+	list: schema.list,
 	remove: schema.find,
 	create: schema.create,
 	update: {

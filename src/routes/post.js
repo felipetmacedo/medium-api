@@ -28,6 +28,11 @@ export default class PostRoutes extends BaseRoutes {
 			this.SchemaValidator.validate(PostSchema.remove),
 			this.postController.remove
 		);
+		this.router.get(
+			"/",
+			this.SchemaValidator.validate(PostSchema.list),
+			this.postController.list
+		);
 
 		return this.router;
 	}

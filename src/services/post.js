@@ -1,4 +1,6 @@
+import { log } from "handlebars";
 import { Post, PostLike } from "../models/index";
+import { PaginationUtils } from "../utils";
 
 class PostService {
 	create(post) {
@@ -24,58 +26,40 @@ class PostService {
 		});
 	}
 
-	async list({ meta, filter }) {
-		const itensPerPage =
-			meta.per_page && meta.per_page < 50 ? meta.per_page : 20;
-		const page = ~~meta.page || 1;
-		const offset = (page - 1) * itensPerPage;
+	async list({ meta }) {
+		const Pagination = PaginationUtils.config({
+			page: meta.page,
+			items_per_page: 20,
+		});
 		const promises = [];
+
+		const whereCondition = {
+			deleted_at: null,
+		};
 
 		promises.push(
 			Post.findAll({
-				attributes: ["id", "title", "content", "userId"],
-				order: [["id", "DESC"]],
-				limit: itensPerPage,
-				offset,
-				where: filter,
-				include: [
-					{
-						model: PostLike,
-						where: {
-							user_id: filter.logged_user_id,
-							is_deleted: false,
-						},
-						as: "likes",
-						attributes: ["id"],
-					},
-				],
+				...Pagination.getQueryParams(),
+				logging: true,
+				raw: false,
+				where: whereCondition,
 			})
 		);
 
-		if (page === 1) {
+		if (Pagination.getPage() === 1) {
 			promises.push(
 				Post.count({
-					where: filter,
+					where: whereCondition,
 				})
 			);
 		}
 
 		const [posts, totalItems] = await Promise.all(promises);
 
-		const postsWithLikes = posts.map((post) => ({
-			...post.get({ plain: true }),
-			numberOfLikes: post.likes.length,
-		}));
-
-		const resp = {
-			items: postsWithLikes,
+		return {
+			...Pagination.mount(totalItems),
+			posts: posts.map((post) => post.get({ plain: true })),
 		};
-
-		if (page === 1) {
-			resp.total_items = totalItems;
-		}
-
-		return resp;
 	}
 }
 

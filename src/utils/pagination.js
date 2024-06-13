@@ -1,4 +1,4 @@
-import { ExceptionUtils } from './';
+import { ExceptionUtils } from "./";
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
 
@@ -7,13 +7,15 @@ export default class PaginationUtils {
 		this._config = Object.assign({}, options);
 
 		if (!this._config.page) {
-			throw new ExceptionUtils('PAGINATION_ERROR');
+			throw new ExceptionUtils("PAGINATION_ERROR");
 		}
 
 		this._config.page = this._config.page || 1;
-		this._config.items_per_page = this._config.items_per_page || DEFAULT_ITEMS_PER_PAGE;
+		this._config.items_per_page =
+			this._config.items_per_page || DEFAULT_ITEMS_PER_PAGE;
 
-		this._config.offset = ((this._config.page - 1) * this._config.items_per_page);
+		this._config.offset =
+			(this._config.page - 1) * this._config.items_per_page;
 
 		return this;
 	}
@@ -22,17 +24,19 @@ export default class PaginationUtils {
 		return {
 			limit: this.getLimit(),
 			offset: this.getOffset(),
-			subQuery: false
+			subQuery: false,
 		};
 	}
 
 	static mount(totalItems) {
 		const response = {
-			itemsPerPage: this._config.items_per_page
+			itemsPerPage: this._config.items_per_page,
 		};
 
 		if (this._config.page === 1) {
-			response.totalPages = Math.ceil(totalItems / this._config.items_per_page);
+			response.totalPages = Math.ceil(
+				totalItems / this._config.items_per_page
+			);
 		}
 
 		return response;
