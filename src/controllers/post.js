@@ -1,4 +1,3 @@
-import { filter } from "lodash";
 import BaseController from "./base";
 import { PostService } from "@services";
 
@@ -10,12 +9,25 @@ class PostController extends BaseController {
 
 		this.bindActions([
 			"create",
+			"get",
 			"list",
 			"update",
 			"remove",
 			"like",
 			"dislike",
 		]);
+	}
+
+	async get(req, res) {
+		try {
+			const response = await this.postService.get({
+				id: req.filter.id,
+				logged_user_id: req.auth.id,
+			});
+			this.successHandler(response, res);
+		} catch (error) {
+			this.errorHandler(error, req, res);
+		}
 	}
 
 	async create(req, res) {

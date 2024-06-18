@@ -1,3 +1,4 @@
+import { get } from "lodash";
 import * as yup from "yup";
 
 const findById = {
@@ -24,6 +25,7 @@ const schema = {
 			})
 			.noUnknown(),
 	},
+	get: findById,
 	find: findById,
 	remove: findById,
 	like: findById,
@@ -31,6 +33,7 @@ const schema = {
 };
 
 export default {
+	get: schema.get,
 	like: schema.like,
 	dislike: schema.dislike,
 	find: schema.find,

@@ -14,6 +14,11 @@ export default class PostRoutes extends BaseRoutes {
 			this.SchemaValidator.validate(PostSchema.list),
 			this.postController.list
 		);
+		this.router.get(
+			"/:id",
+			this.SchemaValidator.validate(PostSchema.get),
+			this.postController.get
+		);
 		this.router.post(
 			"/",
 			this.SchemaValidator.validate(PostSchema.create),

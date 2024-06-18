@@ -6,6 +6,14 @@ class PostService {
 		return Post.create(post);
 	}
 
+	get(filter) {
+		return Post.findOne({
+			where: {
+				id: filter.id,
+			},
+		});
+	}
+
 	update({ changes, filter }) {
 		return Post.update(changes, {
 			where: {
