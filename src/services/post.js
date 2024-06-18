@@ -7,11 +7,33 @@ class PostService {
 	}
 
 	get(filter) {
-		return Post.findOne({
-			where: {
-				id: filter.id,
-			},
-		});
+		const promises = [];
+		const scopes = [];
+		if (filter.logged_user_id) {
+			scopes.push({
+				name: "withUserLike",
+				options: filter.logged_user_id,
+			});
+		}
+
+		promises.push(
+			Post.scope(scopes).findOne({
+				where: {
+					id: filter.id,
+				},
+				raw: false,
+				attributes: [
+					"id",
+					"user_id",
+					"title",
+					"content",
+					"total_likes",
+					"created_at",
+				],
+			})
+		);
+
+		return Promise.all(promises);
 	}
 
 	update({ changes, filter }) {

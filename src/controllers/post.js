@@ -22,7 +22,7 @@ class PostController extends BaseController {
 		try {
 			const response = await this.postService.get({
 				id: req.filter.id,
-				logged_user_id: req.auth.id,
+				logged_user_id: req.auth?.id,
 			});
 			this.successHandler(response, res);
 		} catch (error) {
