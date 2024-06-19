@@ -45,7 +45,6 @@ class PostService {
 		return Post.destroy({
 			where: {
 				id: filter.id,
-				user_id: filter.logged_user_id,
 			},
 		});
 	}
