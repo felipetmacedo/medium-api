@@ -16,24 +16,20 @@ class PostService {
 			});
 		}
 
-		promises.push(
-			Post.scope(scopes).findOne({
-				where: {
-					id: filter.id,
-				},
-				raw: false,
-				attributes: [
-					"id",
-					"user_id",
-					"title",
-					"content",
-					"total_likes",
-					"created_at",
-				],
-			})
-		);
-
-		return Promise.all(promises);
+		return Post.scope(scopes).findOne({
+			where: {
+				id: filter.id,
+			},
+			raw: false,
+			attributes: [
+				"id",
+				"user_id",
+				"title",
+				"content",
+				"total_likes",
+				"created_at",
+			],
+		});
 	}
 
 	update({ changes, filter }) {

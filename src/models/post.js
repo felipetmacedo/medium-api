@@ -48,8 +48,16 @@ export default class Post extends BaseModel {
 								),
 								"is_liked",
 							],
+							[
+								sequelize.literal(
+									`CASE WHEN post.user_id = :user_id THEN true ELSE false END`
+								),
+								"is_owner",
+							],
 						],
-						replacements: { user_id: id },
+						replacements: {
+							user_id: id,
+						},
 					}),
 				},
 			}
