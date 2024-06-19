@@ -32,7 +32,7 @@ class PostService {
 			include: [
 				{
 					model: User,
-					as: "user", // Specify the alias here
+					as: "user",
 					attributes: ["email", "name"],
 				},
 			],
