@@ -1,4 +1,4 @@
-import { Post, PostLike } from "../models/index";
+import { Post, PostLike, User } from "../models/index";
 import { PaginationUtils } from "../utils";
 
 class PostService {
@@ -28,6 +28,13 @@ class PostService {
 				"content",
 				"total_likes",
 				"created_at",
+			],
+			include: [
+				{
+					model: User,
+					as: "user", // Specify the alias here
+					attributes: ["email", "name"],
+				},
 			],
 		});
 	}
