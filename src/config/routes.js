@@ -3,6 +3,7 @@ import { Router } from "express";
 import { UserRoutes } from "@routes";
 import { PostRoutes } from "@routes";
 import { AuthMiddleware } from "../middlewares";
+import { specs, swaggerUi } from "../../swagger";
 
 export default class Routes {
 	constructor() {
@@ -20,6 +21,7 @@ export default class Routes {
 			AuthMiddleware.isAuthorized,
 			this.postRoutes.setup()
 		);
+		this.routes.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 		return this.routes;
 	}
