@@ -82,6 +82,7 @@ class PostService {
 					"total_likes",
 					"created_at",
 				],
+				order: [["created_at", "DESC"]],
 			})
 		);
 
